@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Registro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+<div class="container" th:classappend="${showRegisterForm} ? 'active' : ''">
+    <!-- Login -->
+    <div class="form-box login">
+        <form th:action="@{/login}" method="post" th:object="${loginRequest}" onsubmit="return handleLoginSubmit(event)">
+            <h1>Login</h1>
+            <div class="input-box">
+                <i class='bx bxs-user'></i>
+                <input type="text" th:field="*{username}" placeholder="Username" required autocomplete="username">
+            </div>
+
+            <div class="input-box">
+                <i class='bx bxs-lock-alt'></i>
+                <input type="password" th:field="*{password}" id="password" placeholder="Password" required autocomplete="current-password">
+                <i class='bx bx-show toggle-password' id="togglePassword"></i>
+            </div>
+
+            <div class="input-box checkbox" style="display: flex; align-items: center; gap: 8px; margin: -10px 0 15px;">
+                <input type="checkbox" name="rememberMe" id="rememberMe" style="width: 18px; height: 18px;">
+                <label for="rememberMe" style="font-size: 14.5px;">Recordarme</label>
+            </div>
+
+            <div class="forgot-link">
+                <a th:href="@{/forgot-password}">¿Has olvidado tu contraseña?</a>
+            </div>
+
+            <button type="submit" id="loginBtn" class="btn">
+                <span id="loginText">Login</span>
+                <span id="loginSpinner" class="spinner" style="display: none;"></span>
+            </button>
+
+            <!-- Barra de progreso -->
+            <div id="progressBarContainer" style="display: none; width: 100%; margin-top: 20px;">
+                <div id="progressBar" style="
+                    width: 0%;
+                    height: 6px;
+                    background: #7494ec;
+                    border-radius: 4px;
+                    transition: width 0.4s ease;
+                "></div>
+            </div>
+
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+            <p>o iniciar sesión con plataformas sociales</p>
+            <div class="social-icons">
+                <a href="#"><i class='bx bxl-google'></i></a>
+                <a href="#"><i class='bx bxl-facebook'></i></a>
+                <a href="#"><i class='bx bxl-github'></i></a>
+                <a href="#"><i class='bx bxl-linkedin'></i></a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Registro -->
+    <div class="form-box register">
+        <form th:action="@{/register}" method="post" th:object="${registerRequest}">
+            <h1>Registrate</h1>
+
+            <div class="input-box">
+                <i class='bx bxs-user'></i>
+                <input type="text" th:field="*{username}" placeholder="Username" required>
+            </div>
+
+            <div class="input-box">
+                <i class='bx bxs-envelope'></i>
+                <input type="email" th:field="*{correo}" placeholder="Email" required>
+            </div>
+
+            <div class="input-box">
+                <i class='bx bxs-lock-alt'></i>
+                <input type="password" th:field="*{password}" id="registerPassword" placeholder="Nuevo Password" required>
+                <i class='bx bx-show toggle-password' id="toggleRegisterPassword" title="Mostrar contraseña"></i>
+            </div>
+
+            <div class="input-box">
+                <i class='bx bxs-lock-alt'></i>
+                <input type="password" th:field="*{confirmPassword}" id="confirmPassword" placeholder="Confirmar Password" required>
+                <i class='bx bx-show toggle-password' id="toggleConfirmPassword" title="Mostrar contraseña"></i>
+            </div>
+
+            <button type="submit" class="btn">Registrar</button>
+        </form>
+    </div>
+
+    <!-- Toggle -->
+    <div class="toggle-box">
+        <div class="toggle-panel toggle-left">
+            <h1>¡Hola, bienvenido!</h1>
+            <p>¿No tienes cuenta?</p>
+            <button class="btn register-btn">Registrate</button>
+        </div>
+
+        <div class="toggle-panel toggle-right">
+            <h1>¡Bienvenido de nuevo!</h1>
+            <p>¿Ya tienes una cuenta?</p>
+            <button class="btn login-btn">Login</button>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/main.js}"></script>
+<script th:inline="javascript">
+    let successMessage = /*[[${registerSuccess}]]*/ 'null';
+    let errorMessage = /*[[${registerError}]]*/ 'null';
+
+    if (successMessage && successMessage !== 'null') {
+        Swal.fire({
+            icon: 'success',
+            title: '¡Registro exitoso!',
+            text: successMessage,
+            confirmButtonColor: '#7494ec'
+        });
+    }
+
+    if (errorMessage && errorMessage !== 'null') {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: errorMessage,
+            confirmButtonColor: '#d33'
+        });
+    }
+</script>
+<script>
+    function handleLoginSubmit(event) {
+        event.preventDefault();
+
+        const btn = document.getElementById('loginBtn');
+        const text = document.getElementById('loginText');
+        const spinner = document.getElementById('loginSpinner');
+        const progressBarContainer = document.getElementById('progressBarContainer');
+        const progressBar = document.getElementById('progressBar');
+
+        btn.disabled = true;
+        text.style.display = 'none';
+        spinner.style.display = 'inline-block';
+
+        progressBarContainer.style.display = 'block';
+        progressBar.style.width = '0%';
+
+        let width = 0;
+        const interval = setInterval(() => {
+            if (width >= 100) {
+                clearInterval(interval);
+                event.target.submit();
+            } else {
+                width += 5;
+                progressBar.style.width = width + '%';
+            }
+        }, 100); // velocidad de avance
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const hour = new Date().getHours();
+        const body = document.body;
+
+        if (hour >= 6 && hour < 12) {
+            body.style.background = "linear-gradient(135deg, #FFEFBA, #FFFFFF)";
+        } else if (hour >= 12 && hour < 18) {
+            body.style.background = "linear-gradient(135deg, #a1c4fd, #c2e9fb)";
+        } else {
+            body.style.background = "linear-gradient(135deg, #232526, #414345)";
+        }
+    });
+</script>
+</body>
+</html>
