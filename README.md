@@ -11,7 +11,7 @@
 - **Recuperación de contraseña por correo electrónico**
 - **Restablecimiento de contraseña con token seguro (hash + expiración)**
 - **Roles de usuario (USER / ADMIN)**
-- **Protección de rutas según roles**
+- **Protección de rutas según los roles**
 - **Interfaz responsive y visualmente atractiva con animaciones**
 - **Soporte para temas claro/oscuro y barra de progreso al iniciar sesión**
 - **Integración de íconos (Boxicons) y alertas visuales con SweetAlert2**
