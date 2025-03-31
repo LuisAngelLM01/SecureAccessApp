@@ -57,7 +57,7 @@
    - En **"Seleccionar aplicación"**, elige una o selecciona **"Otra (nombre personalizado)"**, por ejemplo: `jwt-login-thymeleaf`.
    - Haz clic en **"Generar"**.
    - Se mostrará una contraseña de 16 caracteres (ej. `abcd efgh ijkl mnop`).
-   - Usa esta contraseña generada sin espacios en el archivo application.properties en lugar de tu contraseña real de Gmail para el envío de correos.
+   - Usa esta contraseña generada pero sin los espacios (ej. `abcdefghijklmnop`) en el archivo application.properties en lugar de tu contraseña real de Gmail para el envío de correos.
 
 > **Nota:** Si pierdes esta contraseña, deberás generar una nueva desde el mismo enlace.
 
